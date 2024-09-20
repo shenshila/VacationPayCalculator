@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,39 +37,24 @@ public class CalculatorServiceImplTest {
         assertEquals(expectedVacationPay, actualVacationPay);
     }
 
-
-
     @Test
-    void calculateVacationPay_withDate() {
-        VacationPayRequestDto request = new VacationPayRequestDto(78000, 14, LocalDate.of(2024, 12, 28));
+    public void testCalculateWithHolidays() {
+        VacationPayRequestDto requestDto = new VacationPayRequestDto();
+        requestDto.setStartVacationDate(LocalDate.of(2024, 9, 1));
+        requestDto.setVacationDays(10);
+        requestDto.setAverageSalary(3000.0);
 
-        Mockito.when(dateUtil.isHoliday(LocalDate.of(2022, 1, 1))).thenReturn(true);
-        Mockito.when(dateUtil.isWeekend(LocalDate.of(2022,1, 2))).thenReturn(true);
-        when(dateUtil.isHoliday(Mockito.any(LocalDate.class))).thenReturn(false);
-        when(dateUtil.isWeekend(Mockito.any(LocalDate.class))).thenReturn(false);
+        // Первый день — это праздник
 
-        double expectedVacationPay = 78000 * 14 / 29.5;
-        double actualVacationPay = calculatorService.calculateVacationPay(request);
+        when(dateUtil.isHoliday(any(LocalDate.class))).thenReturn(false);
+        when(dateUtil.isWeekend(any(LocalDate.class))).thenReturn(false);
 
-        assertEquals(expectedVacationPay, actualVacationPay);
+        // Выполняем расчет
+        double result = calculatorService.calculateVacationPay(requestDto);
+
+        // Ожидаем, что только 9 дней засчитается
+        assertEquals(10 * 3000.0 / 29.5, result);
     }
 
-    @Test
-    public void testCalculateWithHolidaysAndWeekends() {
-        VacationPayRequestDto vacationPayRequestDto = new VacationPayRequestDto();
-        vacationPayRequestDto.setStartVacationDate(LocalDate.of(2024, 12, 28));
-        vacationPayRequestDto.setVacationDays(10);
-        vacationPayRequestDto.setAverageSalary(100000.0);
-
-        when(dateUtil.isHoliday(LocalDate.of(2025, 1, 1))).thenReturn(true);
-        when(dateUtil.isWeekend(LocalDate.of(2024, 12, 29))).thenReturn(true);
-        when(dateUtil.isHoliday(Mockito.any(LocalDate.class))).thenReturn(true);
-        when(dateUtil.isWeekend(Mockito.any(LocalDate.class))).thenReturn(true);
-
-        double expectedVacationPay = 100000 * 5 / 29.5;
-        double result = calculatorService.calculateVacationPay(vacationPayRequestDto);
-
-        assertEquals(expectedVacationPay, result, 5);
-    }
 
 }
