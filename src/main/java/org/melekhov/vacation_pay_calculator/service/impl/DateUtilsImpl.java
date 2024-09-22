@@ -22,4 +22,5 @@ public class DateUtilsImpl implements DateUtils {
                 .anyMatch(weekend -> weekend.getMonth() == date.getMonth() && weekend.isDayExist(date.getDayOfMonth()));
     }
 
+
 }

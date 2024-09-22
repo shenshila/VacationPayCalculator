@@ -32,12 +32,18 @@ public class CalculatorServiceImpl implements CalculatorService {
         int vacationDays = vacationPayRequestDto.getVacationDays();
 
         for (int i = 0; i < vacationPayRequestDto.getVacationDays(); i++) {
-            if (dateUtils.isHoliday(startVacationDate) || dateUtils.isWeekend(startVacationDate)) {
+            if (isWeekendOrHoliday(startVacationDate)) {
                 vacationDays--;
             }
             startVacationDate = startVacationDate.plusDays(1);
         }
 
         return vacationDays * vacationPayRequestDto.getAverageSalary() / AVG_MONTH_DAYS;
+    }
+
+    public boolean isWeekendOrHoliday(LocalDate date) {
+        if (dateUtils.isHoliday(date) || dateUtils.isWeekend(date))
+            return true;
+        else return false;
     }
 }

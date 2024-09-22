@@ -39,17 +39,24 @@ public class CalculatorServiceImplTest {
 
     @Test
     public void testCalculateWithHolidays() {
-        VacationPayRequestDto requestDto = new VacationPayRequestDto();
-        requestDto.setStartVacationDate(LocalDate.of(2024, 9, 1));
-        requestDto.setVacationDays(10);
-        requestDto.setAverageSalary(3000.0);
+        VacationPayRequestDto request = new VacationPayRequestDto();
+        request.setAverageSalary(10000);
+        request.setVacationDays(7);
+        request.setStartVacationDate(LocalDate.of(2024, 12, 29));
 
-        when(dateUtil.isHoliday(any(LocalDate.class))).thenReturn(false);
-        when(dateUtil.isWeekend(any(LocalDate.class))).thenReturn(false);
 
-        double result = calculatorService.calculateVacationPay(requestDto);
+        when(calculatorService.isWeekendOrHoliday(LocalDate.of(2024, 12, 29))).thenReturn(true);
+        when(calculatorService.isWeekendOrHoliday(LocalDate.of(2024, 12, 30))).thenReturn(false);
+        when(calculatorService.isWeekendOrHoliday(LocalDate.of(2024, 12, 31))).thenReturn(false);
+        when(calculatorService.isWeekendOrHoliday(LocalDate.of(2025, 1, 1))).thenReturn(true);
+        when(calculatorService.isWeekendOrHoliday(LocalDate.of(2025, 1, 2))).thenReturn(true);
+        when(calculatorService.isWeekendOrHoliday(LocalDate.of(2025, 1, 3))).thenReturn(true);
+        when(calculatorService.isWeekendOrHoliday(LocalDate.of(2025, 1, 4))).thenReturn(true);
 
-        assertEquals(10 * 3000.0 / 29.5, result);
+        double expectedVacationPay = 10000 * 2 / 29.5;
+        double actualVacationPay = calculatorService.calculateVacationPay(request);
+
+        assertEquals(expectedVacationPay, actualVacationPay);
     }
 
 
