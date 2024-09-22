@@ -31,7 +31,7 @@ public class CalculatorServiceImpl implements CalculatorService {
         LocalDate startVacationDate = vacationPayRequestDto.getStartVacationDate();
         int vacationDays = vacationPayRequestDto.getVacationDays();
 
-        for (int i = 0; i < vacationDays; i++) {
+        for (int i = 0; i < vacationPayRequestDto.getVacationDays(); i++) {
             if (dateUtils.isHoliday(startVacationDate) || dateUtils.isWeekend(startVacationDate)) {
                 vacationDays--;
             }

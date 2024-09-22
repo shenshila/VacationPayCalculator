@@ -44,15 +44,11 @@ public class CalculatorServiceImplTest {
         requestDto.setVacationDays(10);
         requestDto.setAverageSalary(3000.0);
 
-        // Первый день — это праздник
-
         when(dateUtil.isHoliday(any(LocalDate.class))).thenReturn(false);
         when(dateUtil.isWeekend(any(LocalDate.class))).thenReturn(false);
 
-        // Выполняем расчет
         double result = calculatorService.calculateVacationPay(requestDto);
 
-        // Ожидаем, что только 9 дней засчитается
         assertEquals(10 * 3000.0 / 29.5, result);
     }
 
